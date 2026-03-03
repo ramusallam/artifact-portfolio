@@ -1,12 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged,
-} from 'firebase/auth';
-import type { User } from 'firebase/auth';
+import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useState, useEffect } from 'react';
@@ -25,32 +18,34 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 
-export const signInWithGoogle = async () => {
-  const provider = new GoogleAuthProvider();
-  return signInWithPopup(auth, provider);
-};
+// Silent anonymous sign-in for demo mode
+let authReady = false;
+const authPromise = signInAnonymously(auth)
+  .then(() => { authReady = true; })
+  .catch((err) => {
+    console.warn('Anonymous auth failed — Firestore/Storage writes may not work:', err.message);
+    authReady = true;
+  });
 
-export const signOutUser = () => signOut(auth);
+export const waitForAuth = () => (authReady ? Promise.resolve() : authPromise);
 
-export const useAuthState = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+export const useAuthReady = () => {
+  const [ready, setReady] = useState(authReady);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
+    if (authReady) { setReady(true); return; }
+    const unsubscribe = onAuthStateChanged(auth, () => setReady(true));
     return unsubscribe;
   }, []);
 
-  return { user, loading };
+  return ready;
 };
 
 export const uploadFileToStorage = async (
   file: File,
   path: string
 ): Promise<string> => {
+  await waitForAuth();
   const storageRef = ref(storage, path);
   await uploadBytes(storageRef, file, { contentType: file.type });
   return getDownloadURL(storageRef);
