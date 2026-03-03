@@ -4,13 +4,14 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useState, useEffect } from 'react';
 
+// Hardcoded for demo — Firebase config is public (not a secret)
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: 'AIzaSyCcm85cc4eK2TWemAHJWlAaFbqDbZ971uM',
+  authDomain: 'gen-lang-client-0796756578.firebaseapp.com',
+  projectId: 'gen-lang-client-0796756578',
+  storageBucket: 'gen-lang-client-0796756578.firebasestorage.app',
+  messagingSenderId: '576655504377',
+  appId: '1:576655504377:web:1b93c32144428bcce1c328',
 };
 
 const app = initializeApp(firebaseConfig);
@@ -23,7 +24,7 @@ let authReady = false;
 const authPromise = signInAnonymously(auth)
   .then(() => { authReady = true; })
   .catch((err) => {
-    console.warn('Anonymous auth failed — Firestore/Storage writes may not work:', err.message);
+    console.warn('Anonymous auth failed:', err.message);
     authReady = true;
   });
 

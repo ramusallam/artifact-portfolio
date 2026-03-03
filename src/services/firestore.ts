@@ -6,7 +6,6 @@ import {
   setDoc,
   query,
   where,
-  orderBy,
   getDocs,
   getDoc,
   serverTimestamp,
@@ -60,8 +59,7 @@ export const getReportCardsForStudent = async (
 ): Promise<ReportCard[]> => {
   const q = query(
     collection(db, 'reportCards'),
-    where('studentName', '==', studentName),
-    orderBy('createdAt', 'desc')
+    where('studentName', '==', studentName)
   );
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as ReportCard));
