@@ -6,7 +6,6 @@ import {
   getPortfolioLink,
 } from '../services/firestore';
 import type { ReportCard, SeniorSpeech } from '../services/firestore';
-import { auth } from '../services/firebase';
 import ArtifactCard from './ArtifactCard';
 import PasswordModal from './PasswordModal';
 
@@ -129,7 +128,7 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
   };
 
   const handleGenerateLink = async () => {
-    if (!studentName || !auth.currentUser) return;
+    if (!studentName) return;
     setGeneratingLink(true);
 
     const password = generatePassword();
@@ -139,7 +138,7 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
       const docRef = await createPortfolioLink({
         studentName,
         passwordHash,
-        createdBy: auth.currentUser.uid,
+        createdBy: 'demo-teacher',
       });
       const url = `${window.location.origin}/#shared/${docRef.id}`;
       setShareUrl(url);

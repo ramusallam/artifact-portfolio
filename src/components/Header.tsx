@@ -1,4 +1,3 @@
-import type { User } from 'firebase/auth';
 import type { Tab } from '../App';
 
 const tabs: { key: Tab; label: string }[] = [
@@ -8,13 +7,11 @@ const tabs: { key: Tab; label: string }[] = [
 ];
 
 interface HeaderProps {
-  user: User;
   activeTab: Tab;
   onTabChange: (tab: Tab) => void;
-  onSignOut: () => void;
 }
 
-export default function Header({ user, activeTab, onTabChange, onSignOut }: HeaderProps) {
+export default function Header({ activeTab, onTabChange }: HeaderProps) {
   return (
     <header className="bg-white border-b border-stone-200 sticky top-0 z-50">
       <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-16">
@@ -43,17 +40,7 @@ export default function Header({ user, activeTab, onTabChange, onSignOut }: Head
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-sa-slate hidden sm:block">
-            {user.displayName?.split(' ')[0]}
-          </span>
-          <button
-            onClick={onSignOut}
-            className="text-xs text-sa-slate-light hover:text-sa-rust transition-colors"
-          >
-            Sign out
-          </button>
-        </div>
+        <div className="w-8" />
       </div>
     </header>
   );

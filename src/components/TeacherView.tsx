@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import type { User } from 'firebase/auth';
 import type { Artifact } from '../services/firestore';
 import { saveReportCard } from '../services/firestore';
 import { uploadFileToStorage } from '../services/firebase';
@@ -9,6 +8,7 @@ import {
 } from '../services/gemini';
 import ArtifactUpload from './ArtifactUpload';
 
+const DEMO_TEACHER_ID = 'demo-teacher';
 const GRADES = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
 const GRADE_LEVELS = ['9', '10', '11', '12'];
 const SEMESTERS = ['S1', 'S2'];
@@ -20,11 +20,7 @@ const emptyArtifact = (): Artifact => ({
   aiDescription: '',
 });
 
-interface TeacherViewProps {
-  user: User;
-}
-
-export default function TeacherView({ user }: TeacherViewProps) {
+export default function TeacherView() {
   const [studentName, setStudentName] = useState('');
   const [className, setClassName] = useState('');
   const [grade, setGrade] = useState('A');
@@ -47,7 +43,7 @@ export default function TeacherView({ user }: TeacherViewProps) {
   };
 
   const handleUploadPDF = async (file: File): Promise<string> => {
-    const path = `artifacts/${user.uid}/${Date.now()}_${file.name}`;
+    const path = `artifacts/${DEMO_TEACHER_ID}/${Date.now()}_${file.name}`;
     return uploadFileToStorage(file, path);
   };
 
@@ -100,7 +96,7 @@ export default function TeacherView({ user }: TeacherViewProps) {
     setSaving(true);
     try {
       await saveReportCard({
-        teacherId: user.uid,
+        teacherId: DEMO_TEACHER_ID,
         studentName: studentName.trim(),
         grade,
         className: className.trim(),
