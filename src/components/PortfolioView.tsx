@@ -309,41 +309,50 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
             <h2 className="font-serif text-xl text-sa-green font-bold mb-4">
               Senior Speech
             </h2>
-            {seniorSpeech ? (
-              <div className="flex gap-6">
-                {seniorSpeech.scriptUrl && (
-                  <a
-                    href={seniorSpeech.scriptUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 bg-white rounded-xl px-5 py-4 border border-stone-200 card-hover"
-                  >
-                    <svg className="w-8 h-8 text-sa-rust" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                    </svg>
-                    <span className="text-sm font-medium text-sa-green">Script</span>
-                  </a>
-                )}
-                {seniorSpeech.videoUrl && (
-                  <a
-                    href={seniorSpeech.videoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 bg-white rounded-xl px-5 py-4 border border-stone-200 card-hover"
-                  >
-                    <svg className="w-8 h-8 text-sa-green-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
-                    </svg>
-                    <span className="text-sm font-medium text-sa-green">Video</span>
-                  </a>
-                )}
-              </div>
-            ) : (
-              <p className="text-sm text-sa-slate-light italic">
-                Senior speech will appear here when available.
-              </p>
-            )}
+            <div className="flex gap-6">
+              {seniorSpeech?.scriptUrl ? (
+                <a
+                  href={seniorSpeech.scriptUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 bg-white rounded-xl px-5 py-4 border border-stone-200 card-hover"
+                >
+                  <svg className="w-8 h-8 text-sa-rust" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  </svg>
+                  <span className="text-sm font-medium text-sa-green">Script</span>
+                </a>
+              ) : (
+                <div className="flex items-center gap-3 bg-white/60 rounded-xl px-5 py-4 border border-dashed border-stone-300">
+                  <svg className="w-8 h-8 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  </svg>
+                  <span className="text-sm text-stone-400">Script</span>
+                </div>
+              )}
+              {seniorSpeech?.videoUrl ? (
+                <a
+                  href={seniorSpeech.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 bg-white rounded-xl px-5 py-4 border border-stone-200 card-hover"
+                >
+                  <svg className="w-8 h-8 text-sa-green-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+                  </svg>
+                  <span className="text-sm font-medium text-sa-green">Video</span>
+                </a>
+              ) : (
+                <div className="flex items-center gap-3 bg-white/60 rounded-xl px-5 py-4 border border-dashed border-stone-300">
+                  <svg className="w-8 h-8 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+                  </svg>
+                  <span className="text-sm text-stone-400">Video</span>
+                </div>
+              )}
+            </div>
           </div>
         </>
       )}
