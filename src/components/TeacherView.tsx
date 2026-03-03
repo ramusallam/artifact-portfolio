@@ -20,7 +20,11 @@ const emptyArtifact = (): Artifact => ({
   aiDescription: '',
 });
 
-export default function TeacherView() {
+interface TeacherViewProps {
+  onSaved?: (studentName: string) => void;
+}
+
+export default function TeacherView({ onSaved }: TeacherViewProps) {
   const [studentName, setStudentName] = useState('');
   const [className, setClassName] = useState('');
   const [grade, setGrade] = useState('A');
@@ -106,6 +110,7 @@ export default function TeacherView() {
         artifacts: validArtifacts,
         teacherComment: teacherComment.trim(),
       });
+      onSaved?.(studentName.trim());
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
       // Reset form

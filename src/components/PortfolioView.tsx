@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   getPortfolioForStudent,
   getSeniorSpeech,
   createPortfolioLink,
   getPortfolioLink,
+  deleteReportCard,
 } from '../services/firestore';
 import type { ReportCard, SeniorSpeech } from '../services/firestore';
 import ArtifactCard from './ArtifactCard';
@@ -12,6 +13,7 @@ import PasswordModal from './PasswordModal';
 interface PortfolioViewProps {
   linkId?: string;
   isShared?: boolean;
+  autoLoadStudent?: string;
 }
 
 interface GroupedPortfolio {
@@ -47,13 +49,15 @@ function generatePassword(): string {
   return result;
 }
 
-export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) {
+export default function PortfolioView({ linkId, isShared, autoLoadStudent }: PortfolioViewProps) {
   const [searchName, setSearchName] = useState('');
   const [studentName, setStudentName] = useState('');
   const [reportCards, setReportCards] = useState<ReportCard[]>([]);
   const [seniorSpeech, setSeniorSpeech] = useState<SeniorSpeech | null>(null);
   const [loading, setLoading] = useState(false);
+  const [searched, setSearched] = useState(false);
   const [activeSemester, setActiveSemester] = useState<Record<string, string>>({});
+  const autoLoaded = useRef(false);
 
   // Share link state
   const [showShareModal, setShowShareModal] = useState(false);
@@ -68,6 +72,15 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
     studentName: string;
     passwordHash: string;
   } | null>(null);
+
+  // Auto-load from teacher save
+  useEffect(() => {
+    if (autoLoadStudent && !autoLoaded.current) {
+      autoLoaded.current = true;
+      setSearchName(autoLoadStudent);
+      loadPortfolio(autoLoadStudent);
+    }
+  }, [autoLoadStudent]);
 
   // Handle shared link access
   useEffect(() => {
@@ -99,8 +112,10 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
   };
 
   const loadPortfolio = async (name: string) => {
+    if (!name.trim()) return;
     setLoading(true);
-    setStudentName(name);
+    setSearched(true);
+    setStudentName(name.trim());
     try {
       const [cards, speech] = await Promise.all([
         getPortfolioForStudent(name),
@@ -151,6 +166,15 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
     }
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteReportCard(id);
+      setReportCards((prev) => prev.filter((c) => c.id !== id));
+    } catch (err) {
+      console.error('Delete failed:', err);
+    }
+  };
+
   // Group report cards
   const grouped: GroupedPortfolio = {};
   reportCards.forEach((card) => {
@@ -177,8 +201,8 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
 
   return (
     <div className="max-w-3xl mx-auto animate-fade-in">
-      {/* Header / search */}
-      {!studentName && !isShared && (
+      {/* Header / search — always visible unless shared link */}
+      {!isShared && (
         <>
           <h1 className="font-serif text-2xl text-sa-green font-bold mb-6">
             Student Portfolio
@@ -199,7 +223,7 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
               disabled={loading || !searchName.trim()}
               className="px-6 py-2.5 bg-sa-green text-white text-sm font-medium rounded-xl hover:bg-sa-green-light disabled:opacity-40 transition-colors"
             >
-              View
+              {loading ? 'Loading...' : 'View'}
             </button>
           </div>
         </>
@@ -211,8 +235,15 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
         </div>
       )}
 
+      {/* No results */}
+      {!loading && searched && reportCards.length === 0 && (
+        <p className="text-center text-sa-slate py-12">
+          No portfolio data found for &ldquo;{studentName}&rdquo;.
+        </p>
+      )}
+
       {/* Portfolio content */}
-      {!loading && studentName && (
+      {!loading && reportCards.length > 0 && (
         <>
           {/* Portfolio header */}
           <div className="flex items-start justify-between mb-8">
@@ -232,12 +263,6 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
               </button>
             )}
           </div>
-
-          {sortedGradeLevels.length === 0 && (
-            <p className="text-center text-sa-slate py-12">
-              No artifacts found for this student.
-            </p>
-          )}
 
           {/* Year sections */}
           {sortedGradeLevels.map((gl) => {
@@ -273,9 +298,23 @@ export default function PortfolioView({ linkId, isShared }: PortfolioViewProps) 
                 <div className="space-y-5">
                   {Object.entries(classes).map(([clsName, card]) => (
                     <div key={clsName}>
-                      <h3 className="text-sm font-semibold text-sa-slate mb-2">
-                        {clsName}
-                      </h3>
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-sm font-semibold text-sa-slate">
+                          {clsName}
+                        </h3>
+                        {!isShared && card.id && (
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(card.id!)}
+                            title="Delete entry"
+                            className="text-stone-400 hover:text-red-500 transition-colors p-1"
+                          >
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
                       <div className="space-y-2">
                         {card.artifacts.map((artifact, i) => (
                           <ArtifactCard

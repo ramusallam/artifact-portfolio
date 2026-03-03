@@ -4,6 +4,7 @@ import {
   doc,
   addDoc,
   setDoc,
+  deleteDoc,
   query,
   where,
   getDocs,
@@ -74,6 +75,10 @@ export const getPortfolioForStudent = async (
   );
   const snap = await getDocs(q);
   return snap.docs.map((d) => ({ id: d.id, ...d.data() } as ReportCard));
+};
+
+export const deleteReportCard = async (id: string) => {
+  return deleteDoc(doc(db, 'reportCards', id));
 };
 
 export const createPortfolioLink = async (

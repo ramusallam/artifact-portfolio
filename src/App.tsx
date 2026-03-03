@@ -10,6 +10,7 @@ export type Tab = 'teacher' | 'student' | 'portfolio';
 export default function App() {
   const authReady = useAuthReady();
   const [activeTab, setActiveTab] = useState<Tab>('teacher');
+  const [lastSavedStudent, setLastSavedStudent] = useState('');
 
   useEffect(() => {
     const handleHash = () => {
@@ -46,9 +47,15 @@ export default function App() {
         }}
       />
       <main className="max-w-5xl mx-auto px-4 py-8">
-        {activeTab === 'teacher' && <TeacherView />}
-        {activeTab === 'student' && <StudentView />}
-        {activeTab === 'portfolio' && <PortfolioView />}
+        {activeTab === 'teacher' && (
+          <TeacherView onSaved={(name) => setLastSavedStudent(name)} />
+        )}
+        {activeTab === 'student' && (
+          <StudentView autoLoadStudent={lastSavedStudent} />
+        )}
+        {activeTab === 'portfolio' && (
+          <PortfolioView autoLoadStudent={lastSavedStudent} />
+        )}
       </main>
     </div>
   );
