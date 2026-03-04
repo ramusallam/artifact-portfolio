@@ -130,14 +130,6 @@ export default function StudentView({ autoLoadStudent }: StudentViewProps) {
                 ))}
               </div>
 
-              {card.teacherComment && (
-                <div className="bg-sa-gold/5 border border-sa-gold/20 rounded-xl p-4">
-                  <p className="text-sm text-sa-slate italic">
-                    <span className="font-medium text-sa-green not-italic">Teacher: </span>
-                    {card.teacherComment}
-                  </p>
-                </div>
-              )}
             </div>
           ))}
         </div>

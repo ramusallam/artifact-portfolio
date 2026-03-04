@@ -326,11 +326,6 @@ export default function PortfolioView({ linkId, isShared, autoLoadStudent }: Por
                           />
                         ))}
                       </div>
-                      {card.teacherComment && (
-                        <p className="mt-2 text-sm text-sa-rust italic pl-8">
-                          {card.teacherComment}
-                        </p>
-                      )}
                     </div>
                   ))}
                   {Object.keys(classes).length === 0 && (
