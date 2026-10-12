@@ -57,6 +57,7 @@ export default function App() {
           <PortfolioView autoLoadStudent={lastSavedStudent} />
         )}
       </main>
+      <p className="made-by">Artifact Portfolio by <a href="https://cyclesoflearning.com" target="_blank" rel="noopener">Ramsey Musallam</a></p>
     </div>
   );
 }
